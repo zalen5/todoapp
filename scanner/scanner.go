@@ -96,7 +96,7 @@ func (s *Scanner) cmdAdd(fields []string) string {
 	s.todoList.AddTask(task)
 
 	PrintAdd(title)
-
+	return ""
 }
 
 func (s *Scanner) cmdList(fields []string) string {
