@@ -36,6 +36,8 @@ func (s *Scanner) Start() {
 				Exit()
 				return
 			}
+
+			printResult(result)
 		}
 		event := NewEvent(result, inputString)
 		s.events = append(s.events, event)

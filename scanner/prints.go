@@ -7,6 +7,11 @@ import (
 	"github.com/k0kubun/pp"
 )
 
+func printResult(result string) {
+	fmt.Println("Результат выполнения команды:", result)
+	fmt.Println("")
+}
+
 func NewPromt() {
 	fmt.Print("Введите команду:")
 }
