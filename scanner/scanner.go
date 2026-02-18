@@ -8,7 +8,14 @@ import (
 )
 
 type Scanner struct {
-	todo *todo.List
+	todoList *todo.List
+	events   []Event
+}
+
+func NewScanner(todoList *todo.List) *Scanner {
+	return &Scanner{
+		todoList: todoList,
+	}
 }
 
 func (s *Scanner) Start() {
@@ -30,6 +37,8 @@ func (s *Scanner) Start() {
 				return
 			}
 		}
+		event := NewEvent(result, inputString)
+		s.events = append(s.events, event)
 	}
 }
 
@@ -57,6 +66,13 @@ func (s *Scanner) process(inputString string) string {
 	if cmd == "del" {
 		return s.cmdDel(fields)
 	}
+	if cmd == "help" {
+		return s.cmdHelp(fields)
+	}
+	if cmd == "events" {
+		return s.cmdEvents(fields)
+	}
+	return unknownCommand
 }
 
 func (s *Scanner) cmdAdd(fields []string) string {
@@ -77,7 +93,7 @@ func (s *Scanner) cmdAdd(fields []string) string {
 	}
 	task := todo.NewTask(title, taskText)
 
-	s.todo.AddTask(task)
+	s.todoList.AddTask(task)
 
 	PrintAdd(title)
 
@@ -88,7 +104,7 @@ func (s *Scanner) cmdList(fields []string) string {
 		return WrongArgs
 	}
 
-	tasks := s.todo.GetAllTasks()
+	tasks := s.todoList.GetAllTasks()
 
 	PrintTaks(tasks)
 
@@ -101,7 +117,7 @@ func (s *Scanner) cmdDone(fields []string) string {
 	}
 	title := fields[1]
 
-	doneTaskResult := s.todo.Done(title)
+	doneTaskResult := s.todoList.Done(title)
 	if doneTaskResult != "" {
 		return doneTaskResult
 	}
@@ -117,11 +133,27 @@ func (s *Scanner) cmdDel(fields []string) string {
 
 	title := fields[1]
 
-	delTaskResult := s.todo.Delete(title)
+	delTaskResult := s.todoList.Delete(title)
 	if delTaskResult != "" {
 		return delTaskResult
 	}
 
 	printDel(title)
+	return ""
+}
+
+func (s *Scanner) cmdHelp(fields []string) string {
+	if len(fields) != 1 {
+		return WrongArgs
+	}
+	printHelp()
+	return ""
+}
+
+func (s *Scanner) cmdEvents(fields []string) string {
+	if len(fields) != 1 {
+		return WrongArgs
+	}
+	printEvents(s.events)
 	return ""
 }
